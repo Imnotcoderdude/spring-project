@@ -1,6 +1,7 @@
 // Schedule.java
 package com.sparta.springproject.entity;
 
+import com.sparta.springproject.dto.ScheduleRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,11 +17,11 @@ public class Schedule {
     private String password;
     private String date;
 
-    public Schedule(String title, String content, String userName, String password, String date) {
-        this.title = title;
-        this.content = content;
-        this.userName = userName;
-        this.password = password;
-        this.date = date;
+    public Schedule(ScheduleRequestDto requestDto) {
+        this.password = requestDto.getPassword();
+        this.date = requestDto.getDate();
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.userName = requestDto.getUserName();
     }
 }

@@ -21,14 +21,8 @@ public class ScheduleController {
     @PostMapping("/schedules")
     public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto requestDto) {
         // 요청 받은 데이터를 기반으로 Schedule 객체 생성
-        Schedule schedule = new Schedule(
-                requestDto.getTitle(),
-                requestDto.getContent(),
-                requestDto.getUserName(),
-                requestDto.getPassword(),
-                requestDto.getDate()
-        );
-        // 일정에 일정 번호 부여
+        Schedule schedule = new Schedule(requestDto);
+        // 일정에 일정 고유번호 부여
         Long maxId = scheduleList.size() > 0 ? Collections.max(scheduleList.keySet()) + 1 : 1;
         schedule.setId(maxId);
         // 일정 추가

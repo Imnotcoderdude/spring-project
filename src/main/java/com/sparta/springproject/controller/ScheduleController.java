@@ -1,3 +1,4 @@
+// ScheduleController.java
 package com.sparta.springproject.controller;
 
 import com.sparta.springproject.dto.ScheduleRequestDto;
@@ -5,34 +6,40 @@ import com.sparta.springproject.dto.ScheduleResponseDto;
 import com.sparta.springproject.entity.Schedule;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 public class ScheduleController {
-    // Map 자료구조를 사용해서 일정을 관리함.
-    private final Map<Long, Schedule> ScheduleList = new HashMap<>();
 
-    // createSchedule 메소드 제작.
+    private final Map<Long, Schedule> scheduleList = new HashMap<>();
+
+    // 일정을 추가하는 api
     @PostMapping("/schedules")
     public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto requestDto) {
-        Schedule schedule = new Schedule(requestDto);
-        // id 값으로 일정을 구분하기 위해 maxId값을 찾아야함.
-        // ScheduleList의 값이 아무것도 없다면 1부터 시작하고 만약 존재한다면 마지막 값의 +1을 하여라
-        Long maxId = ScheduleList.size() > 0 ? Collections.max(ScheduleList.keySet()) + 1 : 1;
-        // id에다가 maxId 저장
-        schedule.setPassWord(maxId);
-        // 데이터베이스에 저장
-        ScheduleList.put(schedule.getPassWord(), schedule);
-
-        // entity를 바로 저장하는 것이 아닌 responseDto로 전환
-        ScheduleResponseDto ScheduleResponseDto = new ScheduleResponseDto(schedule);
-        return ScheduleResponseDto;
+        // 요청 받은 데이터를 기반으로 Schedule 객체 생성
+        Schedule schedule = new Schedule(
+                requestDto.getTitle(),
+                requestDto.getContent(),
+                requestDto.getUserName(),
+                requestDto.getPassword(),
+                requestDto.getDate()
+        );
+        // 일정에 일정 번호 부여
+        Long maxId = scheduleList.size() > 0 ? Collections.max(scheduleList.keySet()) + 1 : 1;
+        schedule.setId(maxId);
+        // 일정 추가
+        scheduleList.put(schedule.getId(), schedule);
+        return new ScheduleResponseDto(schedule);
     }
-    // 제대로 저장됐는지 조회하는 api
+
+    // 전체 일정 조회 API
     @GetMapping("/schedules")
-    public List<ScheduleResponseDto> getSchedule() {
-        List<ScheduleResponseDto> responseList = ScheduleList.values().stream().map(ScheduleResponseDto::new).toList();
-        return responseList;
+    public List<ScheduleResponseDto> getSchedules() {
+        return scheduleList.values().stream()
+                .map(ScheduleResponseDto::new).toList();
     }
 }
